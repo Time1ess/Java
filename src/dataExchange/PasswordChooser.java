@@ -4,9 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.sun.jmx.snmp.UserAcl;
-import com.sun.security.auth.UserPrincipal;
-
 public class PasswordChooser extends JPanel
 {
 	private JTextField username;

@@ -2,9 +2,7 @@ package dataExchange;
 
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
-
 
 public class DataExchangeFrame extends JFrame{
 
