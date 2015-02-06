@@ -33,6 +33,11 @@ public class ImagePreviewer extends JLabel{
 					if(icon.getIconWidth()>ImagePreviewer.this.getWidth())
 						icon=new ImageIcon(icon.getImage().getScaledInstance(ImagePreviewer.this.getWidth(),
 								-1, Image.SCALE_DEFAULT));
+					//getScaledInstance方法简述
+					/*	getScaledInstance(int width, int height, int hints)
+					 *  按指定宽高来创建新图像，如果其中之一为负，则按该参数的原始尺寸等比例调整
+					 *  如果两个都为负，则使用原始图像尺寸
+					 */
 					ImagePreviewer.this.setIcon(icon);
 				}
 			}
