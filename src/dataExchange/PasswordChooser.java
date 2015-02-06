@@ -68,12 +68,12 @@ public class PasswordChooser extends JPanel
 		
 		if(dialog==null||dialog.getOwner()!=owner)
 		{
+			
 			dialog=new JDialog(owner,true);
 			dialog.add(this);
 			dialog.getRootPane().setDefaultButton(okButton);
 			dialog.pack();
 		}
-		
 		dialog.setTitle(title);
 		dialog.setVisible(true);
 		return ok;
