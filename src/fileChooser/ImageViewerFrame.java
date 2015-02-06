@@ -32,12 +32,13 @@ public class ImageViewerFrame extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				// TODO 自动生成的方法存根
-				chooser.setCurrentDirectory(new File("."));
+				chooser.setCurrentDirectory(new File(".")); //设置起始目录为当前工作目录
 				
 				int result=chooser.showOpenDialog(ImageViewerFrame.this);
 				
 				if(result==JFileChooser.APPROVE_OPTION)
 				{
+					//如果打开成功，则调用label在框体中显示选择的图片
 					String name=chooser.getSelectedFile().getPath();
 					label.setIcon(new ImageIcon(name));
 					pack();
@@ -64,11 +65,12 @@ public class ImageViewerFrame extends JFrame{
 		
 		FileNameExtensionFilter filter=new FileNameExtensionFilter("Image Files"
 				,"jpg","jpeg","gif");
-		chooser.setFileFilter(filter);
+		chooser.setFileFilter(filter);   //设置文件类型过滤器
 		
-		chooser.setAccessory(new ImagePreviewer(chooser));
+		chooser.setAccessory(new ImagePreviewer(chooser));   //设置图片预览窗口
 		
 		chooser.setFileView(new FileIconView(filter, new ImageIcon("palette.gif")));
+		//设置文件对话框中符合要求的文件类型图标样式
 		
 	}
 	

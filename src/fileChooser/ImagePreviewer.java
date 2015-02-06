@@ -13,7 +13,7 @@ public class ImagePreviewer extends JLabel{
 	{
 		this.setPreferredSize(new Dimension(100,100));
 		this.setBorder(BorderFactory.createEtchedBorder());
-		
+		this.setHorizontalAlignment(CENTER);
 		chooser.addPropertyChangeListener(new PropertyChangeListener()
 		{
 			
