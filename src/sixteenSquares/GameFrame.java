@@ -2,7 +2,9 @@ package sixteenSquares;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
+
 import java.util.*;
 
 public class GameFrame extends JFrame
@@ -11,10 +13,24 @@ public class GameFrame extends JFrame
 	private JPanel settingPanel;
 	private JButton resetButton;
 	private JButton autoButton;
-	private static final int SIZE=4;
+	private static int SIZE;
+	private static int position;
 	ArrayList<JButton> squares;
 	public GameFrame()
 	{
+		JOptionPane settingPane=new JOptionPane();
+		try
+		{
+			SIZE=Integer.valueOf(settingPane.showInputDialog("ÇëÊäÈëÊýÂëÎ¬Êý"));
+			if(SIZE>5)throw new Exception();
+		} 
+		catch (Exception e)
+		{
+			JOptionPane errOptionPane=new JOptionPane();
+			errOptionPane.showMessageDialog(GameFrame.this, "Error Detected!","ERROR",JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+		
 		settingPanel=new JPanel();
 		gamePanel=new JPanel();
 		gamePanel.setLayout(new GridLayout(SIZE, SIZE));
@@ -39,14 +55,24 @@ public class GameFrame extends JFrame
 		{
 			squares.add(new JButton());
 			squares.get(i).addActionListener(listener);
+			squares.get(i).setFont(new Font("monospaced",Font.BOLD,22));
 			gamePanel.add(squares.get(i));
 		}
+		InputMap imap=gamePanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		imap.put(KeyStroke.getKeyStroke("UP"), "UP MOVE");
+		imap.put(KeyStroke.getKeyStroke("DOWN"), "DOWN MOVE");
+		imap.put(KeyStroke.getKeyStroke("LEFT"), "LEFT MOVE");
+		imap.put(KeyStroke.getKeyStroke("RIGHT"), "RIGHT MOVE");
+		ActionMap amap=gamePanel.getActionMap();
+		amap.put("UP MOVE", new DownMove());
+		amap.put("DOWN MOVE", new UpMove());
+		amap.put("LEFT MOVE", new RightMove());
+		amap.put("RIGHT MOVE", new LeftMove());
 		this.add(gamePanel, BorderLayout.CENTER);
 		this.setSize(100*SIZE, 50+100*SIZE);
 		this.setResizable(false);
 		this.Reset();
 	}
-	
 	class SquareListener implements ActionListener
 	{
 		public void actionPerformed(ActionEvent event)
@@ -55,41 +81,25 @@ public class GameFrame extends JFrame
 			{
 			int key=Integer.valueOf(event.getActionCommand());
 			//System.out.println("key "+key+" pressed");
-			if(key%4!=0&&squares.get(key-1).getText()=="")
+			if(key%SIZE!=0&&key-1==position)
 			{
-				//squares.get(key-1).setActionCommand(squares.get(key).getActionCommand());
-				//squares.get(key).setActionCommand("");
-				squares.get(key-1).setText(squares.get(key).getText());
-				squares.get(key).setText("");
-				//System.out.print(" blank right move");
+				GameFrame.this.move(0);
 			}
-			else if((key+1)%SIZE!=0&&squares.get(key+1).getText()=="")
+			else if((key+1)%SIZE!=0&&key+1==position)
 			{
-				//squares.get(key+1).setActionCommand(squares.get(key).getActionCommand());
-				//squares.get(key).setActionCommand("");
-				squares.get(key+1).setText(squares.get(key).getText());
-				squares.get(key).setText("");
-				//System.out.print(" blank left move");
+				GameFrame.this.move(1);
 			}
-			else if(key>SIZE-1&&squares.get(key-SIZE).getText()=="")
+			else if(key>SIZE-1&&key-SIZE==position)
 			{
-				//squares.get(key-4).setActionCommand(squares.get(key).getActionCommand());
-				//squares.get(key).setActionCommand("");
-				squares.get(key-SIZE).setText(squares.get(key).getText());
-				squares.get(key).setText("");
-				//System.out.print(" blank down move");
+				GameFrame.this.move(2);
 			}
-			else if(key<SIZE*(SIZE-1)&&squares.get(key+SIZE).getText()=="")
+			else if(key<SIZE*(SIZE-1)&&key+SIZE==position)
 			{
-				//squares.get(key+4).setActionCommand(squares.get(key).getActionCommand());
-				//squares.get(key).setActionCommand("");
-				squares.get(key+SIZE).setText(squares.get(key).getText());
-				squares.get(key).setText("");
-				//System.out.print(" blank up move");
+				GameFrame.this.move(3);
 			}
 			else 
 			{
-				//System.out.print(" failed");
+				System.out.println(Integer.toString(position));
 			}
 			}
 			catch(Exception e){
@@ -97,30 +107,144 @@ public class GameFrame extends JFrame
 				}
 			//GameFrame.this.repaint();
 			
-			if(GameFrame.this.isEnd())
+//			if(GameFrame.this.isEnd())
+//			{
+//				JOptionPane optionPane=new JOptionPane();
+//				optionPane.showMessageDialog(GameFrame.this, "Win!");
+//				GameFrame.this.Reset();
+//			}
+		}
+	}
+	
+	class UpMove extends AbstractAction
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+				GameFrame.this.move(3);
+		}
+	}
+	class DownMove extends AbstractAction
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+				GameFrame.this.move(2);
+		}
+	}
+	class LeftMove extends AbstractAction
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+				GameFrame.this.move(1);
+		}
+	}
+	class RightMove extends AbstractAction
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+				GameFrame.this.move(0);
+		}
+	}
+	void move(int direction)
+	{
+		switch(direction)
+		{
+		case 0:         //Right Move
+		{
+			if((position+1)%SIZE!=0)
 			{
-				JOptionPane optionPane=new JOptionPane();
-				optionPane.showMessageDialog(GameFrame.this, "Win!");
-				GameFrame.this.Reset();
+				squares.get(position).setText(squares.get(position+1).getText());
+				squares.get(position+1).setText("");
+				position+=1;
+				System.out.println(Integer.toString(position));
 			}
+			break;
+		}
+		case 1:         //Left Move
+		{
+			if(position%SIZE!=0)
+			{
+				squares.get(position).setText(squares.get(position-1).getText());
+				squares.get(position-1).setText("");
+				position-=1;
+				System.out.println(Integer.toString(position));
+			}
+			break;
+		}
+		case 2:         //Down Move
+		{
+			if(position<SIZE*(SIZE-1))
+			{
+				squares.get(position).setText(squares.get(position+SIZE).getText());
+				squares.get(position+SIZE).setText("");
+				position+=SIZE;
+				System.out.println(Integer.toString(position));
+			}
+			break;
+		}
+		case 3:         //Up Move
+		{
+			if(position>SIZE-1)
+			{
+				squares.get(position).setText(squares.get(position-SIZE).getText());
+				squares.get(position-SIZE).setText("");
+				position-=SIZE;
+				System.out.println(Integer.toString(position));
+			}
+			break;
+		}
+			
+		default:
+			break;
+				
+		}
+		if(GameFrame.this.isEnd())
+		{
+			JOptionPane optionPane=new JOptionPane();
+			optionPane.showMessageDialog(GameFrame.this, "Win!");
+			GameFrame.this.Reset();
+		}
+	}
+	boolean isanswerable()
+	{
+		int[] list=new int[SIZE*SIZE];
+		int cs=0;
+		for(int i=0;i<SIZE*SIZE;i++)
+		{
+			if(squares.get(i).getText()!="")
+				list[i]=Integer.valueOf(squares.get(i).getText());
+			else 
+				list[i]=0;
+			if(list[i]!=0)
+			for(int j=0;j<i;j++)
+			{
+				if(list[j]>list[i])cs++;
+			}
+			else continue;
+		}
+
+		if(SIZE%2==0)
+		{			
+			if((cs+(SIZE*SIZE-1-position)/SIZE)%2==0)
+				return true;
+			else return false;
+		}
+		else
+		{
+			if(cs%2==0)return true;
+			else return false;
 		}
 	}
 	
 	boolean isEnd()
 	{
-		int minus=1;
 		int i;
-		for(i=0;i<SIZE*SIZE;i++)
+		for(i=0;i<SIZE*SIZE-1;i++)
 		{
-			if(squares.get(i).getText()=="")
-				{
-					minus=0;
-					continue;
-				}
-			if(Integer.valueOf(squares.get(i).getText())-minus==i)continue;
-			break;
+			if(squares.get(i).getText()!=""&&
+					Integer.valueOf(squares.get(i).getText())-1==i)continue;
+			else break;
 		}
-		if(i==SIZE*SIZE)return true;
+		if(i==SIZE*SIZE-1)return true;
 		else return false;
 	}
 	void Reset()
@@ -128,29 +252,40 @@ public class GameFrame extends JFrame
 		do
 		{
 			Random rand=new Random();
-		int[] order=new int[SIZE*SIZE];
-		int p;
-		for(int i=0;i<SIZE*SIZE;i++)
-		{
-			squares.get(i).setText("");
-			squares.get(i).setActionCommand(Integer.toString(i));
-			while(true)
+			int[] order=new int[SIZE*SIZE];
+			int p;
+			for(int i=0;i<SIZE*SIZE;i++)
 			{
-				p=rand.nextInt(SIZE*SIZE)+1;
-				int j;
-				for(j=0;j<SIZE*SIZE;j++)
-					if(order[j]==p)break;
-				if(j==SIZE*SIZE)
+				squares.get(i).setText("");
+				squares.get(i).setActionCommand(Integer.toString(i));
+				while(true)
+				{
+					p=rand.nextInt(SIZE*SIZE)+1;
+					int j;
+					for(j=0;j<SIZE*SIZE;j++)
+						if(order[j]==p)break;
+					if(j==SIZE*SIZE)
 					{
 						order[i]=p;
-						if(p!=SIZE*SIZE){
+						if(p!=SIZE*SIZE)
+						{
 							squares.get(i).setText(Integer.toString(p));
 //							squares.get(i).setActionCommand(Integer.toString(p));
+						}
+						else
+						{
+							position=i;
+							//System.out.println(Integer.toString(position));
 						}
 						break;
 					}
 			}
 		}
-		}while(GameFrame.this.isEnd());
+		isanswerable();
+		}while(GameFrame.this.isEnd()||!GameFrame.this.isanswerable());
 	}
+	
+	
+	
+	
 }
