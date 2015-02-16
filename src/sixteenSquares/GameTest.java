@@ -21,7 +21,7 @@ public class GameTest
 				public void run()
 				{
 					JFrame frame=new GameFrame();
-					frame.setTitle("Sixteen Squares Game");
+					frame.setTitle("Game");
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					frame.setVisible(true);
 				}

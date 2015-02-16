@@ -21,21 +21,20 @@ public class GameFrame extends JFrame
 		JOptionPane settingPane=new JOptionPane();
 		try
 		{
-			SIZE=Integer.valueOf(settingPane.showInputDialog("请输入数码维数"));
+			SIZE=Integer.valueOf(settingPane.showInputDialog(GameFrame.this, "请输入数码维数", "游戏初始化", JOptionPane.INFORMATION_MESSAGE));
 			if(SIZE>5)throw new Exception();
 		} 
 		catch (Exception e)
 		{
 			JOptionPane errOptionPane=new JOptionPane();
-			errOptionPane.showMessageDialog(GameFrame.this, "Error Detected!","ERROR",JOptionPane.ERROR_MESSAGE);
+			errOptionPane.showMessageDialog(GameFrame.this, "检测到初始化错误!","错误",JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 		
 		settingPanel=new JPanel();
 		gamePanel=new JPanel();
 		gamePanel.setLayout(new GridLayout(SIZE, SIZE));
-		JButton bu=new JButton("Test");
-		resetButton=new JButton("Reset");
+		resetButton=new JButton("重置");
 		resetButton.addActionListener(new ActionListener()
 			{
 				
@@ -45,7 +44,7 @@ public class GameFrame extends JFrame
 					GameFrame.this.Reset();
 				}
 			});
-		autoButton=new JButton("Auto Game");
+		autoButton=new JButton("自动");
 		settingPanel.add(resetButton);
 		settingPanel.add(autoButton);
 		this.add(settingPanel,BorderLayout.SOUTH);
@@ -102,25 +101,18 @@ public class GameFrame extends JFrame
 				System.out.println(Integer.toString(position));
 			}
 			}
-			catch(Exception e){
-				//System.out.println(e.getMessage());
-				}
-			//GameFrame.this.repaint();
-			
-//			if(GameFrame.this.isEnd())
-//			{
-//				JOptionPane optionPane=new JOptionPane();
-//				optionPane.showMessageDialog(GameFrame.this, "Win!");
-//				GameFrame.this.Reset();
-//			}
+			catch(Exception e)
+			{
+			}
+			GameFrame.this.WinToReset();
 		}
 	}
-	
 	class UpMove extends AbstractAction
 	{
 		public void actionPerformed(ActionEvent event)
 		{
 				GameFrame.this.move(3);
+				GameFrame.this.WinToReset();
 		}
 	}
 	class DownMove extends AbstractAction
@@ -128,6 +120,7 @@ public class GameFrame extends JFrame
 		public void actionPerformed(ActionEvent event)
 		{
 				GameFrame.this.move(2);
+				GameFrame.this.WinToReset();
 		}
 	}
 	class LeftMove extends AbstractAction
@@ -135,6 +128,7 @@ public class GameFrame extends JFrame
 		public void actionPerformed(ActionEvent event)
 		{
 				GameFrame.this.move(1);
+				GameFrame.this.WinToReset();
 		}
 	}
 	class RightMove extends AbstractAction
@@ -142,6 +136,7 @@ public class GameFrame extends JFrame
 		public void actionPerformed(ActionEvent event)
 		{
 				GameFrame.this.move(0);
+				GameFrame.this.WinToReset();
 		}
 	}
 	void move(int direction)
@@ -155,7 +150,7 @@ public class GameFrame extends JFrame
 				squares.get(position).setText(squares.get(position+1).getText());
 				squares.get(position+1).setText("");
 				position+=1;
-				System.out.println(Integer.toString(position));
+//				System.out.println(Integer.toString(position));
 			}
 			break;
 		}
@@ -166,7 +161,7 @@ public class GameFrame extends JFrame
 				squares.get(position).setText(squares.get(position-1).getText());
 				squares.get(position-1).setText("");
 				position-=1;
-				System.out.println(Integer.toString(position));
+//				System.out.println(Integer.toString(position));
 			}
 			break;
 		}
@@ -177,7 +172,7 @@ public class GameFrame extends JFrame
 				squares.get(position).setText(squares.get(position+SIZE).getText());
 				squares.get(position+SIZE).setText("");
 				position+=SIZE;
-				System.out.println(Integer.toString(position));
+//				System.out.println(Integer.toString(position));
 			}
 			break;
 		}
@@ -188,7 +183,7 @@ public class GameFrame extends JFrame
 				squares.get(position).setText(squares.get(position-SIZE).getText());
 				squares.get(position-SIZE).setText("");
 				position-=SIZE;
-				System.out.println(Integer.toString(position));
+//				System.out.println(Integer.toString(position));
 			}
 			break;
 		}
@@ -197,10 +192,14 @@ public class GameFrame extends JFrame
 			break;
 				
 		}
+
+	}
+	void WinToReset()
+	{
 		if(GameFrame.this.isEnd())
 		{
 			JOptionPane optionPane=new JOptionPane();
-			optionPane.showMessageDialog(GameFrame.this, "Win!");
+			optionPane.showMessageDialog(GameFrame.this, "胜利!");
 			GameFrame.this.Reset();
 		}
 	}
@@ -234,7 +233,6 @@ public class GameFrame extends JFrame
 			else return false;
 		}
 	}
-	
 	boolean isEnd()
 	{
 		int i;
@@ -275,17 +273,13 @@ public class GameFrame extends JFrame
 						else
 						{
 							position=i;
-							//System.out.println(Integer.toString(position));
+//							System.out.println(Integer.toString(position));
 						}
 						break;
 					}
 			}
 		}
-		isanswerable();
 		}while(GameFrame.this.isEnd()||!GameFrame.this.isanswerable());
 	}
-	
-	
-	
-	
+
 }
