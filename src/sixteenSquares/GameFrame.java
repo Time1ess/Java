@@ -5,6 +5,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import com.sun.java.swing.plaf.motif.MotifBorders.BevelBorder;
+
 import java.util.*;
 
 public class GameFrame extends JFrame
@@ -13,6 +15,7 @@ public class GameFrame extends JFrame
 	private JPanel settingPanel;
 	private JButton resetButton;
 	private JButton autoButton;
+	private JButton rebootButton;
 	private static int SIZE;
 	private static int position;
 	ArrayList<JButton> squares;
@@ -32,9 +35,12 @@ public class GameFrame extends JFrame
 		}
 		
 		settingPanel=new JPanel();
+		settingPanel.setLayout(new GridLayout());
+		settingPanel.setBorder(BorderFactory.createEtchedBorder(Color.BLACK, Color.GRAY));
 		gamePanel=new JPanel();
 		gamePanel.setLayout(new GridLayout(SIZE, SIZE));
 		resetButton=new JButton("重置");
+		resetButton.setBackground(Color.WHITE);
 		resetButton.addActionListener(new ActionListener()
 			{
 				
@@ -44,9 +50,22 @@ public class GameFrame extends JFrame
 					GameFrame.this.Reset();
 				}
 			});
+		rebootButton=new JButton("重启");
+		rebootButton.setBackground(Color.WHITE);
+		rebootButton.addActionListener(new ActionListener()
+			{
+				
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					GameFrame.this.reboot();
+				}
+			});
 		autoButton=new JButton("自动");
+		autoButton.setBackground(Color.WHITE);
 		settingPanel.add(resetButton);
 		settingPanel.add(autoButton);
+		settingPanel.add(rebootButton);
 		this.add(settingPanel,BorderLayout.SOUTH);
 		squares=new ArrayList<JButton>();
 		ActionListener listener=new SquareListener();
@@ -68,9 +87,41 @@ public class GameFrame extends JFrame
 		amap.put("LEFT MOVE", new RightMove());
 		amap.put("RIGHT MOVE", new LeftMove());
 		this.add(gamePanel, BorderLayout.CENTER);
-		this.setSize(100*SIZE, 50+100*SIZE);
+		this.setSize(100*SIZE+50, 50+100*SIZE);
 		this.setResizable(false);
 		this.Reset();
+	}
+	public void reboot()
+	{
+		GameFrame.this.setVisible(false);
+		GameFrame.this.setResizable(true);
+		JOptionPane settingPane=new JOptionPane();
+		try
+		{
+			SIZE=Integer.valueOf(settingPane.showInputDialog(GameFrame.this, "请输入数码维数", "游戏初始化", JOptionPane.INFORMATION_MESSAGE));
+			if(SIZE>5)throw new Exception();
+		} 
+		catch (Exception e)
+		{
+			JOptionPane errOptionPane=new JOptionPane();
+			errOptionPane.showMessageDialog(GameFrame.this, "检测到初始化错误!","错误",JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+		gamePanel.setLayout(new GridLayout(SIZE, SIZE));
+		squares.clear();
+		gamePanel.removeAll();
+		ActionListener listener=new SquareListener();
+		for(int i=0;i<SIZE*SIZE;i++)
+		{
+			squares.add(new JButton());
+			squares.get(i).addActionListener(listener);
+			squares.get(i).setFont(new Font("monospaced",Font.BOLD,22));
+			gamePanel.add(squares.get(i));
+		}
+		GameFrame.this.setSize(100*SIZE, 50+100*SIZE);
+		GameFrame.this.setResizable(false);
+		GameFrame.this.setVisible(true);
+		GameFrame.this.Reset();
 	}
 	class SquareListener implements ActionListener
 	{
